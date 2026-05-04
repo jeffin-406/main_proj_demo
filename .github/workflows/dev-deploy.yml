@@ -12,7 +12,7 @@ jobs:
   build-and-push:
     name: Build and Push
     # This tells GitHub to use your specific EC2 runner
-    runs-on: [self-hosted, development] 
+    runs-on: [self-hosted, runner_dev] 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
