@@ -3,7 +3,7 @@ services:
   web:
     image: ${ECR_REPO_URL}:latest
     ports:
-      - "80:80"
+      - "8090:80"
     env_file:
       - .env.dev
     restart: always
