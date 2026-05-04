@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  web:
+    image: ${ECR_REPO_URL}:latest
+    ports:
+      - "80:80"
+    env_file:
+      - .env.dev
+    restart: always
