@@ -11,7 +11,7 @@ env:
 jobs:
   build-and-push:
     name: Build and Push
-    runs-on: [self-hosted, runner_prod] 
+    runs-on: [self-hosted, runner_dev] 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
