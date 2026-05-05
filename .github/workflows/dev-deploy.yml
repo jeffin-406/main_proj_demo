@@ -54,7 +54,7 @@ jobs:
           export ECR_REPO_URL=$ECR_REPO_URL
           
           # 2. Tell Docker Compose to pull the brand new image down from ECR
-          docker-compose -f docker-compose.dev.yml pull
+          docker compose -f docker-compose.dev.yml pull
           
           # 3. Re-create and start the container in the background
-          docker-compose -f docker-compose.dev.yml up -d
+          docker compose -f docker-compose.dev.yml up -d
