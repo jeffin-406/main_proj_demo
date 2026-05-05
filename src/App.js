@@ -1,9 +1,10 @@
 import React from 'react';
 
 function App() {
-  // Safe fallback if your env script hasn't loaded yet
+  // Updated to match your .env file keys exactly
   const backgroundColor = window._env_?.COLOR || 'red';
-  const environmentName = window._env_?.ENVIRONMENT || 'Development';
+  const environmentName = window._env_?.APP_ENV || 'Development';
+  const applicationName = window._env_?.APP_NAME || 'Student Major Project';
 
   const styles = {
     backgroundColor: backgroundColor,
@@ -18,7 +19,8 @@ function App() {
 
   return (
     <div style={styles}>
-      <h1>Student Major Project</h1>
+      {/* Now your Title is dynamic too! */}
+      <h1>{applicationName}</h1> 
       <p>Current Environment: <strong>{environmentName}</strong></p>
     </div>
   );
