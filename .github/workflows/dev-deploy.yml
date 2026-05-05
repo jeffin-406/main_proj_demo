@@ -11,7 +11,7 @@ env:
 jobs:
   build-and-push:
     name: Build and Push
-    runs-on: [self-hosted, runner_prod]
+    runs-on: [self-hosted, runner_dev]
     outputs:
       registry: ${{ steps.login-ecr.outputs.registry }}
     steps:
@@ -40,12 +40,11 @@ jobs:
   deploy-to-dev:
     name: Deploy Container via Docker Compose
     needs: build-and-push
-    runs-on: [self-hosted, runner_prod]
+    runs-on: [self-hosted, runner_dev]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. ADD THIS: Authenticate the deploy shell environment with AWS
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -53,18 +52,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # 2. ADD THIS: Run the ECR helper to authenticate local Docker CLI daemon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 3. RUN COMPOSE: Now docker has the basic auth credentials to pull the image
       - name: Deploy with Docker Compose
         env:
           ECR_REPO_URL: ${{ needs.build-and-push.outputs.registry }}/${{ env.ECR_REPOSITORY }}
         run: |
-          export ECR_REPO_URL=$ECR_REPO_URL
+          # 1. Permanently write the variable to .env so Docker Compose can pick it up natively
+          echo "ECR_REPO_URL=${ECR_REPO_URL}" > .env
           
-          # Using "docker compose" without the hyphen as per modern configurations
+          # 2. Pull the latest image from AWS ECR
           docker compose -f docker-compose.dev.yml pull
-          docker compose -f docker-compose.dev.yml up -d
+          
+          # 3. Bring down stale/orphaned configurations if they exist
+          docker compose -f docker-compose.dev.yml down --remove-orphans
+          
+          # 4. Spin up the container, forcing recreation to lock in port 8050
+          docker compose -f docker-compose.dev.yml up -d --force-recreate
