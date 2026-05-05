@@ -1,0 +1,41 @@
+name: Production Direct ECR Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: jeffin/student-major-project
+
+jobs:
+  deploy-to-prod:
+    name: Pull from ECR and Deploy
+    runs-on: [self-hosted, runner_prod] # Runs directly on your Prod EC2
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Deploy with Docker Compose
+        env:
+          # Construct the ECR Registry URL dynamically from the login step
+          ECR_REPO_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+        run: |
+          export ECR_REPO_URL=$ECR_REPO_URL
+          
+          # 1. Pull the image that was built during the dev stage
+          docker compose -f docker-compose.prod.yml pull
+          
+          # 2. Deploy it live on port 80
+          docker compose -f docker-compose.prod.yml up -d
