@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     # Docker Compose reads the exported $ECR_REPO_URL variable from the pipeline
