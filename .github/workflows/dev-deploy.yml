@@ -40,7 +40,7 @@ jobs:
   deploy-to-dev:
     name: Deploy Container via Docker Compose
     needs: build-and-push
-    runs-on: [self-hosted, runner_dev]
+    runs-on: [self-hosted, runner_prod]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
