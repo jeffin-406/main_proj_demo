@@ -1,23 +1,27 @@
 import React from 'react';
 
 function App() {
-  const config = window._env_ || {
-    APP_ENV: "Local",
-    COLOR: "gray",
-    APP_NAME: "Default Project"
-  };
+  // Safe fallback if your env script hasn't loaded yet
+  const backgroundColor = window._env_?.COLOR || 'red';
+  const environmentName = window._env_?.ENVIRONMENT || 'Development';
 
-  const style = {
-    backgroundColor: config.COLOR === 'RED' ? '#e74c3c' : '#2ecc71',
-    height: '100vh', color: 'white', display: 'flex', 
-    flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+  const styles = {
+    backgroundColor: backgroundColor,
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'white',
+    fontFamily: 'sans-serif'
   };
 
   return (
-    <div style={style}>
-      <h1>{config.APP_NAME}</h1>
-      <h2>Environment: {config.APP_ENV}</h2>
+    <div style={styles}>
+      <h1>Student Major Project</h1>
+      <p>Current Environment: <strong>{environmentName}</strong></p>
     </div>
   );
 }
+
 export default App;
