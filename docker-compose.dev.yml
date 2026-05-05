@@ -1,6 +1,8 @@
 version: '3.8'
+
 services:
   web:
+    # Docker Compose reads the exported $ECR_REPO_URL variable from the pipeline
     image: ${ECR_REPO_URL}:latest
     ports:
       - "8090:80"
