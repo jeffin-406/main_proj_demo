@@ -11,7 +11,7 @@ FROM nginx:alpine
 
 # Remove default Nginx config and add our custom one
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx/default.conf /etc/nginx/http.d/default.conf
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Copy build files from the previous stage
 COPY --from=build /app/build /usr/share/nginx/html
